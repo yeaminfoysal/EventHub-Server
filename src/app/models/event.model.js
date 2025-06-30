@@ -26,6 +26,11 @@ const eventSchema = new mongoose.Schema(
             required: [true, "Creator name is required"],
             trim: true,
         },
+        username:{
+            type: String,
+            required: [true, "Username is required"],
+            trim: true,
+        },
         attendeeCount: {
             type: Number,
             default: 0,

@@ -38,23 +38,23 @@ eventRoutes.get("/", async (req, res) => {
     }
 });
 
-eventRoutes.get("/:bookId", async (req, res) => {
-    // try {
-    //     const bookId = req.params.bookId;
-    //     const book = await Book.findById(bookId);
+eventRoutes.get("/my/:username", async (req, res) => {
+    try {
+        const username = req.params.username;
+        const events = await Event.find({ username });
 
-    //     res.status(200).json({
-    //         success: true,
-    //         message: "Book retrieved successfully",
-    //         data: book,
-    //     });
-    // } catch (error) {
-    //     res.status(404).json({
-    //         success: false,
-    //         message: "Book not found",
-    //         error,
-    //     });
-    // }
+        res.status(200).json({
+            success: true,
+            message: "Events retrieved successfully",
+            data: events,
+        });
+    } catch (error) {
+        res.status(404).json({
+            success: false,
+            message: "Event not found",
+            error,
+        });
+    }
 });
 
 eventRoutes.patch("/join/:eventId", async (req, res) => {
