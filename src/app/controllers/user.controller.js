@@ -68,7 +68,7 @@ userRoutes.post("/login", async (req, res) => {
         return res.status(401).json({ success: false, message: "Invalid credentials" });
     }
 
-    const token = generateToken(user.username);
+    const token = generateToken(user);
     res.json({
         success: true,
         token,
