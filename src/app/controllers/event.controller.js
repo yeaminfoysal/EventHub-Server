@@ -4,38 +4,38 @@ const Event = require("../models/event.model");
 const eventRoutes = express.Router();
 
 eventRoutes.post("/", async (req, res) => {
-    // try {
-    //     const event = req.body;
-    //     const book = await Event.create(body);
-    //     res.status(201).json({
-    //         success: true,
-    //         message: "Book created successfully",
-    //         data: book,
-    //     });
-    // } catch (error) {
-    //     res.status(400).json({
-    //         success: false,
-    //         message: "Validation failed",
-    //         error,
-    //     });
-    // }
+    try {
+        const data = req.body;
+        const event = await Event.create(data)
+        res.status(201).json({
+            success: true,
+            message: 'Event created successfully',
+            data: event
+        })
+    } catch (error) {
+        res.status(400).json({
+            success: false,
+            message: "Validation failed",
+            error,
+        });
+    }
 });
 
 eventRoutes.get("/", async (req, res) => {
-    // try {
-    //     const books = await Book.find(); // <-- added missing logic
-    //     res.status(200).json({
-    //         success: true,
-    //         message: "Books retrieved successfully",
-    //         data: books,
-    //     });
-    // } catch (error) {
-    //     res.status(400).json({
-    //         success: false,
-    //         message: "Validation failed",
-    //         error,
-    //     });
-    // }
+    try {
+        const events = await Event.find(); // <-- added missing logic
+        res.status(200).json({
+            success: true,
+            message: "Events retrieved successfully",
+            data: events,
+        });
+    } catch (error) {
+        res.status(400).json({
+            success: false,
+            message: "Validation failed",
+            error,
+        });
+    }
 });
 
 eventRoutes.get("/:bookId", async (req, res) => {
@@ -57,26 +57,32 @@ eventRoutes.get("/:bookId", async (req, res) => {
     // }
 });
 
-eventRoutes.patch("/:bookId", async (req, res) => {
-    // try {
-    //     const bookId = req.params.bookId;
-    //     const updatedBook = req.body;
-    //     const book = await Book.findByIdAndUpdate(bookId, updatedBook, {
-    //         new: true,
-    //     });
+eventRoutes.patch("/join/:eventId", async (req, res) => {
+    try {
+        const eventId = req.params.eventId;
+        const updatedEvent = await Event.findByIdAndUpdate(
+            eventId,
+            { $inc: { attendeeCount: 1 } },
+            { new: true }
+        );
 
-    //     res.status(201).json({
-    //         success: true,
-    //         message: "Book updated successfully",
-    //         data: book,
-    //     });
-    // } catch (error) {
-    //     res.status(500).json({
-    //         success: false,
-    //         message: "Failed to update book",
-    //         error,
-    //     });
-    // }
+        if (!updatedEvent) {
+            return res.status(404).json({ success: false, message: 'Event not found' });
+        }
+
+        res.status(200).json({
+            success: true,
+            message: 'Joined event successfully',
+            data: updatedEvent,
+        });
+    } catch (error) {
+        console.error('Join event error:', error);
+        res.status(500).json({
+            success: false,
+            message: 'Failed to join event',
+            error: error.message,
+        });
+    }
 });
 
 eventRoutes.delete("/:bookId", async (req, res) => {
