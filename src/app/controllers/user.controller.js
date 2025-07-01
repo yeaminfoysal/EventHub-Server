@@ -6,21 +6,28 @@ const userRoutes = express.Router();
 
 // Fake JWT implementation using HMAC + crypto
 function generateToken(user) {
-    const header = Buffer.from(JSON.stringify({ alg: "HS256", typ: "JWT" })).toString("base64url");
+  const header = Buffer.from(
+    JSON.stringify({ alg: "HS256", typ: "JWT" })
+  ).toString("base64url");
 
-    const payload = Buffer.from(
-        JSON.stringify({ username: user.username, name: user.name })
-    ).toString("base64url");
+  const payload = Buffer.from(
+    JSON.stringify({
+      username: user.username,
+      name: user.name,
+      photoUrl: user.photoUrl, // ✅ Include photoUrl here
+    })
+  ).toString("base64url");
 
-    const secret = process.env.SECRET || "mysecret";
+  const secret = process.env.SECRET || "mysecret";
 
-    const signature = require("crypto")
-        .createHmac("sha256", secret)
-        .update(`${header}.${payload}`)
-        .digest("base64url");
+  const signature = require("crypto")
+    .createHmac("sha256", secret)
+    .update(`${header}.${payload}`)
+    .digest("base64url");
 
-    return `${header}.${payload}.${signature}`;
+  return `${header}.${payload}.${signature}`;
 }
+
 
 
 
@@ -38,7 +45,7 @@ function verifyToken(token) {
 
 // Register
 userRoutes.post("/register", async (req, res) => {
-    const { name, username, password } = req.body;
+    const { name,photoUrl, username, password } = req.body;
     console.log(req);
 
     const existingUser = await User.findOne({ username });
@@ -46,7 +53,7 @@ userRoutes.post("/register", async (req, res) => {
         return res.status(409).json({ success: false, message: "User already exists" });
     }
 
-    const user = new User({ name, username });
+    const user = new User({ name, photoUrl, username });
     user.setPassword(password);
     await user.save();
 

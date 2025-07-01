@@ -23,7 +23,7 @@ eventRoutes.post("/", async (req, res) => {
 
 eventRoutes.get("/", async (req, res) => {
     try {
-        const events = await Event.find(); // <-- added missing logic
+        const events = await Event.find().sort({ dateTime: 1 }); // <-- added missing logic
         res.status(200).json({
             success: true,
             message: "Events retrieved successfully",
@@ -113,7 +113,8 @@ eventRoutes.patch("/:eventId", async (req, res) => {
 eventRoutes.delete("/:eventId", async (req, res) => {
     try {
         const eventId = req.params.eventId;
-        const deletedEvent = await Book.findOneAndDelete({ _id: eventId });
+        console.log(req.params.eventId);
+        const deletedEvent = await Event.findOneAndDelete({ _id: eventId });
         if (!deletedEvent) {
             return res.status(404).json({
                 success: false,
