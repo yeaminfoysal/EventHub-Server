@@ -85,29 +85,54 @@ eventRoutes.patch("/join/:eventId", async (req, res) => {
     }
 });
 
-eventRoutes.delete("/:bookId", async (req, res) => {
-    // try {
-    //     const bookId = req.params.bookId;
-    //     const deletedBook = await Book.findOneAndDelete({ _id: bookId });
-    //     if (!deletedBook) {
-    //         return res.status(404).json({
-    //             success: false,
-    //             message: "Book not found",
-    //             data: null,
-    //         });
-    //     }
-    //     res.status(200).json({
-    //         success: true,
-    //         message: "Book deleted successfully",
-    //         data: null,
-    //     });
-    // } catch (error) {
-    //     res.status(404).json({
-    //         success: false,
-    //         message: "Book not found",
-    //         error,
-    //     });
-    // }
+eventRoutes.patch("/:eventId", async (req, res) => {
+    try {
+        const eventId = req.params.eventId;
+        const updatedBody = req.body;
+        const updatedEvent = await Event.findByIdAndUpdate(eventId, updatedBody, { new: true });
+
+        if (!updatedEvent) {
+            return res.status(404).json({ success: false, message: 'Event not found' });
+        }
+
+        res.status(200).json({
+            success: true,
+            message: 'Event updated successfully',
+            data: updatedEvent,
+        });
+    } catch (error) {
+        console.error('Join event error:', error);
+        res.status(500).json({
+            success: false,
+            message: 'Failed to join event',
+            error: error.message,
+        });
+    }
+});
+
+eventRoutes.delete("/:eventId", async (req, res) => {
+    try {
+        const eventId = req.params.eventId;
+        const deletedEvent = await Book.findOneAndDelete({ _id: eventId });
+        if (!deletedEvent) {
+            return res.status(404).json({
+                success: false,
+                message: "Event not found",
+                data: null,
+            });
+        }
+        res.status(200).json({
+            success: true,
+            message: "Event deleted successfully",
+            data: null,
+        });
+    } catch (error) {
+        res.status(404).json({
+            success: false,
+            message: "Book not found",
+            error,
+        });
+    }
 });
 
 module.exports = { eventRoutes };
